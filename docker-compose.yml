@@ -92,6 +92,7 @@ services:
     volumes:
       - ./configs/dnsdist/dnsdist.conf:/etc/dnsdist/dnsdist.conf:ro
       - ./data/shared-certs:/shared-certs:ro
+      - ./data/dnsdist-logs:/var/log
     environment:
       - DOMAIN_DNS=${DOMAIN_DNS}
     entrypoint: ["/bin/sh", "-c"]
