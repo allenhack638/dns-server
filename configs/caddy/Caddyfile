@@ -46,7 +46,6 @@
       roll_size 10MB
       roll_keep 5
     }
-    format single_field common_log
   }
 }
 
