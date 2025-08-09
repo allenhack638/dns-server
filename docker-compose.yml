@@ -7,7 +7,7 @@ services:
     hostname: pihole
     environment:
       - TZ=${TZ}
-      - WEBPASSWORD=${WEBPASSWORD}
+      - FTLCONF_webserver_api_password=${FTLCONF_webserver_api_password}
     volumes:
       - ./data/pihole:/etc/pihole
       - ./data/dnsmasq.d:/etc/dnsmasq.d
