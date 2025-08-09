@@ -53,6 +53,48 @@ services:
       pihole:
         condition: service_healthy
 
+  # Certificate copier - copies certs with proper permissions
+  cert-copier:
+    image: alpine:latest
+    container_name: dns-cert-copier
+    volumes:
+      - ./data/caddy-data:/caddy-data:ro
+      - ./data/shared-certs:/shared-certs
+    environment:
+      - DOMAIN_DNS=${DOMAIN_DNS}
+    command: >
+      sh -c "
+        echo 'Starting certificate copier for domain: $${DOMAIN_DNS}'
+        
+        while true; do
+          CERT_PATH=\"/caddy-data/caddy/certificates/acme-v02.api.letsencrypt.org-directory/$${DOMAIN_DNS}/$${DOMAIN_DNS}.crt\"
+          KEY_PATH=\"/caddy-data/caddy/certificates/acme-v02.api.letsencrypt.org-directory/$${DOMAIN_DNS}/$${DOMAIN_DNS}.key\"
+          
+          if [ -f \"$$CERT_PATH\" ] && [ -f \"$$KEY_PATH\" ]; then
+            echo 'Found certificates, copying to shared location...'
+            mkdir -p /shared-certs
+            cp \"$$CERT_PATH\" /shared-certs/dns.crt
+            cp \"$$KEY_PATH\" /shared-certs/dns.key
+            chmod 644 /shared-certs/dns.crt
+            chmod 644 /shared-certs/dns.key
+            echo 'Certificates copied successfully with proper permissions'
+          else
+            echo 'Waiting for certificates to be generated...'
+            echo \"Checked: $$CERT_PATH\"
+            echo \"Checked: $$KEY_PATH\"
+          fi
+          
+          sleep 30
+        done
+      "
+    restart: unless-stopped
+    depends_on:
+      caddy:
+        condition: service_healthy
+    networks:
+      dns-network:
+        ipv4_address: 172.20.0.14
+
   # dnsdist - DNS proxy for DoT and DoH backend
   dnsdist:
     image: powerdns/dnsdist-19:1.9.6
@@ -60,7 +102,7 @@ services:
     hostname: dnsdist
     volumes:
       - ./configs/dnsdist/dnsdist.conf:/etc/dnsdist/dnsdist.conf:ro
-      - ./data/caddy-data:/data:ro
+      - ./data/shared-certs:/shared-certs:ro
     environment:
       - DOMAIN_DNS=${DOMAIN_DNS}
     entrypoint: ["/bin/sh", "-c"]
@@ -84,8 +126,8 @@ services:
     depends_on:
       pihole:
         condition: service_healthy
-      caddy:
-        condition: service_healthy
+      cert-copier:
+        condition: service_started
 
 networks:
   dns-network:
