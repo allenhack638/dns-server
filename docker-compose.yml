@@ -77,8 +77,6 @@ services:
       - DOMAIN_DNS=${DOMAIN_DNS}
     volumes:
       - ./configs/dnsdist/dnsdist.conf:/etc/dnsdist/dnsdist.conf:ro
-      - ${CADDY_DATA_DIR}:/data:ro
-      - /etc/localtime:/etc/localtime:ro
     ports:
       - "53:53/tcp"
       - "53:53/udp"
