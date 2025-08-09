@@ -9,10 +9,6 @@ services:
     environment:
       - TZ=${TZ}
       - WEBPASSWORD=${PIHOLE_PASSWORD}
-      - FTLCONF_LOCAL_IPV4=${HOST_IP}
-      - PIHOLE_DNS_=127.0.0.1#${PIHOLE_DNS_PORT}
-      - VIRTUAL_HOST=${DOMAIN_DASHBOARD}
-      - WEB_PORT=${PIHOLE_WEB_PORT}
     volumes:
       - ${PIHOLE_CONFIG_DIR}:/etc/pihole
       - ${DNSMASQ_CONFIG_DIR}:/etc/dnsmasq.d
