@@ -63,7 +63,7 @@ services:
 
   # dnsdist - DNS proxy for DoT and DoH backend
   dnsdist:
-    image: powerdns/dnsdist-17:latest
+    image: powerdns/dnsdist-19:1.9.6
     container_name: dns-dnsdist
     hostname: dnsdist
     environment:
