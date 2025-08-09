@@ -55,69 +55,69 @@ services:
 
   # Certificate copier - copies certs with proper permissions
   cert-copier:
-    image: busybox:1.36-musl # Only 4.26MB vs Alpine's 7.3MB
+    image: busybox:1.36-musl
     container_name: dns-cert-copier
     volumes:
       - ./data/caddy-data:/caddy-data:ro
       - ./data/shared-certs:/shared-certs
     environment:
       - DOMAIN_DNS=${DOMAIN_DNS}
-    command: >
-      sh -c "
-        echo 'Setting up weekly certificate copier for domain: $${DOMAIN_DNS}'
-        
+    entrypoint: ["/bin/sh"]
+    command:
+      - -c
+      - |
+        echo "Setting up weekly certificate copier for domain: $$DOMAIN_DNS"
+
         # Create the certificate copy script
-        cat > /copy-certs.sh << 'EOF'
+        cat > /copy-certs.sh << 'SCRIPT_END'
         #!/bin/sh
-        CERT_PATH=\"/caddy-data/caddy/certificates/acme-v02.api.letsencrypt.org-directory/$${DOMAIN_DNS}/$${DOMAIN_DNS}.crt\"
-        KEY_PATH=\"/caddy-data/caddy/certificates/acme-v02.api.letsencrypt.org-directory/$${DOMAIN_DNS}/$${DOMAIN_DNS}.key\"
-        
-        echo \"\$(date): Starting certificate check...\"
-        
-        if [ -f \"\$CERT_PATH\" ] && [ -f \"\$KEY_PATH\" ]; then
-          # Check if certificates have changed (compare modification times)
+        CERT_PATH="/caddy-data/caddy/certificates/acme-v02.api.letsencrypt.org-directory/$DOMAIN_DNS/$DOMAIN_DNS.crt"
+        KEY_PATH="/caddy-data/caddy/certificates/acme-v02.api.letsencrypt.org-directory/$DOMAIN_DNS/$DOMAIN_DNS.key"
+
+        echo "$(date): Starting certificate check..."
+
+        if [ -f "$CERT_PATH" ] && [ -f "$KEY_PATH" ]; then
           NEED_COPY=0
           
-          if [ ! -f \"/shared-certs/dns.crt\" ] || [ ! -f \"/shared-certs/dns.key\" ]; then
+          if [ ! -f "/shared-certs/dns.crt" ] || [ ! -f "/shared-certs/dns.key" ]; then
             NEED_COPY=1
-            echo \"\$(date): Initial certificate copy needed\"
-          elif [ \"\$CERT_PATH\" -nt \"/shared-certs/dns.crt\" ] || [ \"\$KEY_PATH\" -nt \"/shared-certs/dns.key\" ]; then
+            echo "$(date): Initial certificate copy needed"
+          elif [ "$CERT_PATH" -nt "/shared-certs/dns.crt" ] || [ "$KEY_PATH" -nt "/shared-certs/dns.key" ]; then
             NEED_COPY=1
-            echo \"\$(date): Certificate renewal detected - copying updated certificates\"
+            echo "$(date): Certificate renewal detected - copying updated certificates"
           fi
           
-          if [ \$NEED_COPY -eq 1 ]; then
+          if [ $NEED_COPY -eq 1 ]; then
             mkdir -p /shared-certs
-            cp \"\$CERT_PATH\" /shared-certs/dns.crt
-            cp \"\$KEY_PATH\" /shared-certs/dns.key
+            cp "$CERT_PATH" /shared-certs/dns.crt
+            cp "$KEY_PATH" /shared-certs/dns.key
             chmod 644 /shared-certs/dns.crt /shared-certs/dns.key
-            echo \"\$(date): Certificates copied successfully with proper permissions\"
+            echo "$(date): Certificates copied successfully"
           else
-            echo \"\$(date): Certificates are up to date - no copy needed\"
+            echo "$(date): Certificates are up to date"
           fi
         else
-          echo \"\$(date): Certificate files not found at expected location\"
-          echo \"  Checked: \$CERT_PATH\"
-          echo \"  Checked: \$KEY_PATH\"
+          echo "$(date): Certificate files not found"
+          echo "  Checked: $CERT_PATH"
+          echo "  Checked: $KEY_PATH"
         fi
-        
-        echo \"\$(date): Certificate check completed\"
-        EOF
-        
+
+        echo "$(date): Certificate check completed"
+        SCRIPT_END
+
         chmod +x /copy-certs.sh
-        
-        # Set up cron to run every Sunday at 3 AM (weekly)
+
+        # Set up weekly cron (Sunday 3 AM)
         echo '0 3 * * 0 /copy-certs.sh >> /shared-certs/cert-copy.log 2>&1' > /var/spool/cron/crontabs/root
-        
-        # Run initial copy immediately
-        echo 'Running initial certificate copy...'
+
+        # Run initial copy
+        echo "Running initial certificate copy..."
         /copy-certs.sh
-        
-        # Start cron daemon in foreground
-        echo 'Starting cron daemon for weekly certificate checks...'
-        echo 'Schedule: Every Sunday at 3:00 AM'
+
+        # Start cron daemon
+        echo "Starting cron daemon for weekly certificate checks..."
+        echo "Schedule: Every Sunday at 3:00 AM"
         crond -f -l 2
-      "
     restart: unless-stopped
     depends_on:
       caddy:
