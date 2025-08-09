@@ -1,22 +1,73 @@
-# DNS over HTTPS endpoint
-dns.allenbenny.site {
+# # DNS over HTTPS endpoint
+# dns.allenbenny.site {
+#   encode gzip
+
+#   handle /dns-query* {
+#     reverse_proxy https://dnsdist:443 {
+#       transport http {
+#         tls_insecure_skip_verify
+#       }
+#     }
+#   }
+
+#   handle {
+#     respond "DNS over HTTPS endpoint" 200
+#   }
+# }
+
+# # Pi-hole Dashboard  
+# dashboard.allenbenny.site {
+#   encode gzip
+#   reverse_proxy http://pihole
+# }
+
+# Dynamic DNS over HTTPS endpoint
+{$DOMAIN_DNS} {
   encode gzip
 
+  # Handle DoH requests - proxy to dnsdist container port 443
   handle /dns-query* {
-    reverse_proxy https://dnsdist:8053 {
+    reverse_proxy https://dnsdist:443 {
       transport http {
         tls_insecure_skip_verify
       }
     }
   }
 
+  # Default response for other paths
   handle {
-    respond "DNS over HTTPS endpoint" 200
+    header Content-Type "text/plain"
+    respond "DNS over HTTPS endpoint - Use /dns-query for DNS queries" 200
+  }
+
+  # Logging
+  log {
+    output file /data/logs/dns-access.log {
+      roll_size 10MB
+      roll_keep 5
+    }
+    format single_field common_log
   }
 }
 
-# Pi-hole Dashboard  
-dashboard.allenbenny.site {
+# Dynamic Pi-hole Dashboard
+{$DOMAIN_DASHBOARD} {
   encode gzip
-  reverse_proxy http://pihole:8080
+
+  # Proxy to Pi-hole web interface
+  reverse_proxy http://pihole:80 {
+    # Pi-hole specific headers
+    header_down -Server
+    header_down +X-Frame-Options "SAMEORIGIN"
+    header_down +X-Content-Type-Options "nosniff"
+  }
+
+  # Logging  
+  log {
+    output file /data/logs/dashboard-access.log {
+      roll_size 10MB
+      roll_keep 5
+    }
+    format single_field common_log
+  }
 }
