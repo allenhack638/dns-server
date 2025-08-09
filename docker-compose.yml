@@ -61,6 +61,8 @@ services:
     volumes:
       - ./configs/dnsdist/dnsdist.conf:/etc/dnsdist/dnsdist.conf:ro
       - ./data/caddy-data:/data:ro
+    environment:
+      - DOMAIN_DNS=${DOMAIN_DNS}
     entrypoint: ["/bin/sh", "-c"]
     command: ["dnsdist --config /etc/dnsdist/dnsdist.conf --supervised"]
     ports:
