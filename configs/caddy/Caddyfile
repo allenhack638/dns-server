@@ -1,0 +1,22 @@
+# DNS over HTTPS endpoint
+dns.allenbenny.site {
+  encode gzip
+
+  handle /dns-query* {
+    reverse_proxy https://dnsdist:8053 {
+      transport http {
+        tls_insecure_skip_verify
+      }
+    }
+  }
+
+  handle {
+    respond "DNS over HTTPS endpoint" 200
+  }
+}
+
+# Pi-hole Dashboard  
+dashboard.allenbenny.site {
+  encode gzip
+  reverse_proxy http://pihole:8080
+}

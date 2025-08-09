@@ -1,0 +1,253 @@
+# DNS Server Docker Setup - .gitignore
+
+# ========================================
+# Environment and Secrets
+# ========================================
+.env
+.env.local
+.env.*.local
+*.env
+
+# Backup of original env file
+.env.backup
+.env.example.backup
+
+# ========================================
+# Pi-hole Data (Large and Dynamic Files)
+# ========================================
+data/pihole/
+!data/pihole/.gitkeep
+
+# Pi-hole specific files that shouldn't be in Git
+data/pihole/*.db
+data/pihole/*.db-*
+data/pihole/pihole-FTL.db*
+data/pihole/gravity.db*
+data/pihole/macvendor.db
+data/pihole/dhcp.leases*
+
+# Pi-hole logs
+data/pihole/pihole.log*
+data/pihole/FTL.log*
+data/pihole/*.log
+data/pihole/pihole_debug.log
+
+# Pi-hole temporary and cache files
+data/pihole/*.tmp
+data/pihole/temp/
+data/pihole/cache/
+data/pihole/*.backup
+data/pihole/*.bak
+
+# Pi-hole session and state files
+data/pihole/setupVars.conf.backup*
+data/pihole/versions
+
+# ========================================
+# Caddy Data (Certificates and Cache)
+# ========================================
+data/caddy-data/
+!data/caddy-data/.gitkeep
+
+# Caddy certificates (auto-generated)
+data/caddy-data/certificates/
+data/caddy-data/locks/
+data/caddy-data/ocsp/
+
+# Caddy logs
+data/caddy-data/logs/
+*.log
+
+# ========================================
+# dnsmasq Configuration (if dynamic)
+# ========================================
+data/dnsmasq.d/*.conf.backup
+data/dnsmasq.d/*.tmp
+
+# ========================================
+# SSL Certificates (if manually managed)
+# ========================================
+certs/
+certificates/
+ssl/
+*.pem
+*.key
+*.crt
+*.csr
+*.p12
+*.pfx
+
+# Let's Encrypt (if used)
+letsencrypt/
+certbot/
+
+# ========================================
+# Docker and Container Data
+# ========================================
+# Docker Compose override files
+docker-compose.override.yml
+docker-compose.*.yml
+!docker-compose.yml
+
+# Docker volumes (if using named volumes)
+volumes/
+
+# ========================================
+# Logs and Monitoring
+# ========================================
+logs/
+*.log
+*.log.*
+log/
+
+# Prometheus/Grafana data (if added later)
+monitoring/prometheus/data/
+monitoring/grafana/data/
+
+# ========================================
+# Backup Files
+# ========================================
+*.backup
+*.bak
+*.old
+backup/
+backups/
+*.tar.gz
+*.zip
+dns-backup-*
+
+# ========================================
+# Development and IDE Files
+# ========================================
+# VSCode
+.vscode/
+*.code-workspace
+
+# JetBrains IDEs
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Sublime Text
+*.sublime-*
+
+# Vim
+*.swp
+*.swo
+*~
+.*.swp
+.*.swo
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+
+# ========================================
+# Operating System Files
+# ========================================
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ========================================
+# Temporary Files
+# ========================================
+tmp/
+temp/
+.tmp/
+.temp/
+*.tmp
+*.temp
+
+# ========================================
+# Testing and Debug Files
+# ========================================
+test-output/
+debug/
+*.debug
+core
+core.*
+
+# ========================================
+# Documentation Build Files
+# ========================================
+docs/_build/
+site/
+.mkdocs/
+
+# ========================================
+# Node.js (if adding any JS tools)
+# ========================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# ========================================
+# Python (if adding any Python scripts)
+# ========================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.env
+pip-log.txt
+
+# ========================================
+# Scripts and Tools Output
+# ========================================
+migration-backup-*/
+dns-migration-*/
+.migration/
+
+# ========================================
+# Keep Essential Structure
+# ========================================
+# Keep directory structure but ignore contents
+!data/
+!configs/
+!scripts/
+
+# Keep sample/template files
+!configs/**/*.example
+!configs/**/*.template
+!configs/**/*.sample
+
+# Keep documentation
+!README.md
+!docs/
+!*.md
+
+# Keep essential config files
+!docker-compose.yml
+!.env.example
