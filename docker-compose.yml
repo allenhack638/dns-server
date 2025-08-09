@@ -1,6 +1,4 @@
 # prettier-ignore
-version: "3.8"
-
 services:
   # Pi-hole - DNS filtering and ad blocking
   pihole:
