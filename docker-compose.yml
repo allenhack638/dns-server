@@ -32,34 +32,34 @@ services:
       - dns-network
 
   # Caddy - Reverse proxy for DoH and Dashboard with Auto SSL
-  caddy:
-    image: caddy:latest
-    container_name: dns-caddy
-    hostname: caddy
-    environment:
-      - DOMAIN_DNS=${DOMAIN_DNS}
-      - DOMAIN_DASHBOARD=${DOMAIN_DASHBOARD}
-      - DNSDIST_DOH_PORT=${DNSDIST_DOH_PORT}
-      - PIHOLE_WEB_PORT=${PIHOLE_WEB_PORT}
-    volumes:
-      - ${CADDY_CONFIG_DIR}:/etc/caddy
-      - ${CADDY_DATA_DIR}:/data
-      - /etc/localtime:/etc/localtime:ro
-    ports:
-      - "80:80"
-      - "443:443"
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "caddy", "validate", "--config", "/etc/caddy/Caddyfile"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
-    networks:
-      - dns-network
-    depends_on:
-      pihole:
-        condition: service_healthy
+  # caddy:
+  #   image: caddy:latest
+  #   container_name: dns-caddy
+  #   hostname: caddy
+  #   environment:
+  #     - DOMAIN_DNS=${DOMAIN_DNS}
+  #     - DOMAIN_DASHBOARD=${DOMAIN_DASHBOARD}
+  #     - DNSDIST_DOH_PORT=${DNSDIST_DOH_PORT}
+  #     - PIHOLE_WEB_PORT=${PIHOLE_WEB_PORT}
+  #   volumes:
+  #     - ${CADDY_CONFIG_DIR}:/etc/caddy
+  #     - ${CADDY_DATA_DIR}:/data
+  #     - /etc/localtime:/etc/localtime:ro
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   restart: unless-stopped
+  #   healthcheck:
+  #     test: ["CMD", "caddy", "validate", "--config", "/etc/caddy/Caddyfile"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 3
+  #     start_period: 10s
+  #   networks:
+  #     - dns-network
+  #   depends_on:
+  #     pihole:
+  #       condition: service_healthy
 
   # dnsdist - DNS proxy for DoT and DoH backend
   dnsdist:
@@ -98,8 +98,8 @@ services:
     depends_on:
       pihole:
         condition: service_healthy
-      caddy:
-        condition: service_healthy
+      # caddy:
+      #   condition: service_healthy
 
 networks:
   dns-network:
