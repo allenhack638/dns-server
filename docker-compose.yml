@@ -69,14 +69,16 @@ services:
     environment:
       - PIHOLE_DNS_PORT=${PIHOLE_DNS_PORT}
       - DNSDIST_DOH_PORT=${DNSDIST_DOH_PORT}
-      - DNSDIST_WEB_PORT=${DNSDIST_WEB_PORT}
-      - DNSDIST_CONTROL_PORT=${DNSDIST_CONTROL_PORT}
-      - DNSDIST_API_KEY=${DNSDIST_API_KEY}
-      - DNSDIST_CONSOLE_PASSWORD=${DNSDIST_CONSOLE_PASSWORD}
-      - DNSDIST_KEY=${DNSDIST_KEY}
+      # - DNSDIST_WEB_PORT=${DNSDIST_WEB_PORT}
+      # - DNSDIST_CONTROL_PORT=${DNSDIST_CONTROL_PORT}
+      # - DNSDIST_API_KEY=${DNSDIST_API_KEY}
+      # - DNSDIST_CONSOLE_PASSWORD=${DNSDIST_CONSOLE_PASSWORD}
+      # - DNSDIST_KEY=${DNSDIST_KEY}
       - DOMAIN_DNS=${DOMAIN_DNS}
     volumes:
       - ./configs/dnsdist/dnsdist.conf:/etc/dnsdist/dnsdist.conf:ro
+    entrypoint: ["/bin/sh", "-c"] # ← ADD THIS
+    command: ["dnsdist --config /etc/dnsdist/dnsdist.conf --supervised"] # ← ADD THIS
     ports:
       - "53:53/tcp"
       - "53:53/udp"
