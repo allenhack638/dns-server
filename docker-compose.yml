@@ -102,6 +102,13 @@ services:
       - "53:53/udp"
       - "853:853/tcp"
     restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "5"
+        compress: "true"
+
     cap_add:
       - NET_BIND_SERVICE
     healthcheck:
