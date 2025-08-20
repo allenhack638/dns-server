@@ -3,8 +3,6 @@
 Run your own **private DNS resolver** with advanced filtering, DNS over HTTPS (DoH), and DNS over TLS (DoT) — all in a simple Docker setup.  
 Pi-hole provides customizable DNS filtering and query logging, dnsdist handles DNS/DoT/DoH backends, and Caddy manages HTTPS with automatic Let's Encrypt certificates.
 
----
-
 ## ✨ Features
 
 - **Custom DNS filtering**: Centralized control over which domains are resolved
@@ -12,8 +10,6 @@ Pi-hole provides customizable DNS filtering and query logging, dnsdist handles D
 - **Automatic TLS**: Caddy obtains and renews certificates via Let's Encrypt
 - **Dashboard**: Full query visibility and management at `https://<DOMAIN_DASHBOARD>`
 - **Persistence & health checks**: Data volumes and restart policies included
-
----
 
 ## 🔧 Prerequisites
 
@@ -25,8 +21,6 @@ Pi-hole provides customizable DNS filtering and query logging, dnsdist handles D
   - `53/tcp+udp` → DNS
   - `853/tcp` → DoT
 - **Docker & Docker Compose** installed
-
----
 
 ## 🚀 Quick start
 
@@ -48,8 +42,6 @@ cp env.example .env
 ```bash
 docker compose up -d
 ```
-
----
 
 ## 📜 Logs & Troubleshooting
 
@@ -75,8 +67,6 @@ docker compose logs caddy
 docker compose logs dnsdist
 ```
 
----
-
 ## ⚙️ Environment variables
 
 | Variable                         | Description                               |
@@ -86,15 +76,11 @@ docker compose logs dnsdist
 | `DOMAIN_DNS`                     | Public domain for DoH/DoT (TLS via Caddy) |
 | `DOMAIN_DASHBOARD`               | Public domain for the dashboard           |
 
----
-
 ## 💾 Data & persistence
 
 - Pi-hole configuration and DNSMasq data persist in the `data/` directory
 - Certificates are stored under `data/caddy-data/`
 - Certificates are also copied to `data/shared-certs/` for dnsdist
-
----
 
 ## 📡 Usage
 
@@ -105,8 +91,6 @@ docker compose logs dnsdist
 | DNS       | `<SERVER_IP>`                       | 53   |
 | Dashboard | `https://<DOMAIN_DASHBOARD>/admin/` | 443  |
 
----
-
 ## 📍 Ports
 
 | Port(s)        | Service                 |
@@ -115,8 +99,6 @@ docker compose logs dnsdist
 | 53/tcp, 53/udp | DNS (dnsdist → Pi-hole) |
 | 853/tcp        | DoT (dnsdist)           |
 
----
-
 ### Learn how to open ports:
 
 - **On Linux (ufw, firewalld, or iptables)** — see the [DigitalOcean guide on opening ports](https://www.digitalocean.com/community/tutorials/opening-a-port-on-linux) :contentReference[oaicite:2]{index=2}
@@ -124,14 +106,10 @@ docker compose logs dnsdist
 
 > Tip: Always follow your local IT/security policies when opening firewall ports.
 
----
-
 ## 📝 Notes
 
 - Ensure your domain DNS records are configured **before starting**, so Caddy can obtain certificates.
 - Set a strong password for **`FTLCONF_webserver_api_password`**.
-
----
 
 ## 🙌 Credits
 
@@ -140,8 +118,6 @@ This project would not be possible without the following open-source software:
 - [Pi-hole](https://pi-hole.net/) – Network-level DNS filtering and management
 - [dnsdist](https://dnsdist.org/) – Highly DNS-, DoS- and abuse-aware load-balancer
 - [Caddy](https://caddyserver.com/) – Powerful, enterprise-ready web server with automatic HTTPS
-
----
 
 ## 🤝 Contributing & Issues
 
