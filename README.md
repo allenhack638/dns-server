@@ -8,7 +8,7 @@ Pi-hole provides customizable DNS filtering and query logging, dnsdist handles D
 - **Custom DNS filtering**: Centralized control over which domains are resolved
 - **Secure DNS**: DoH at `https://<DOMAIN_DNS>/dns-query` and DoT on port `853`
 - **Automatic TLS**: Caddy obtains and renews certificates via Let's Encrypt
-- **Dashboard**: Full query visibility and management at `https://<DOMAIN_DASHBOARD>`
+- **Dashboard**: Full query visibility and management at `https://<DOMAIN_DNS>/admin/login`
 - **Persistence & health checks**: Data volumes and restart policies included
 
 ## 🔧 Prerequisites
@@ -76,6 +76,8 @@ docker compose logs dnsdist
 | `DOMAIN_DNS`                     | Public domain for DoH/DoT (TLS via Caddy) |
 | `DOMAIN_DASHBOARD`               | Public domain for the dashboard           |
 
+👉 For a full list of supported environment variables and configuration options, check the [Pi-hole Docker repository](https://github.com/pi-hole/docker-pi-hole).
+
 ## 💾 Data & persistence
 
 - Pi-hole configuration and DNSMasq data persist in the `data/` directory
@@ -122,3 +124,9 @@ This project would not be possible without the following open-source software:
 ## 🤝 Contributing & Issues
 
 If you encounter any issues, have questions, or would like to suggest new features, please feel free to open an issue or start a discussion in this repository. Contributions and feedback are always welcome!
+
+## 📖 Advanced Configuration
+
+If you need more granular control over your DNS server (custom ACLs, advanced dnsdist load-balancing strategies, conditional forwarding rules, integration with upstream resolvers, or enterprise-grade security hardening), feel free to [contact me](mailto:allenbenny038@gmail.com).
+
+I can help with advanced setups, scaling, and adding **granular features** beyond what’s covered in the base configuration.
