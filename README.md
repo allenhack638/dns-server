@@ -10,126 +10,174 @@ Pi-hole provides customizable DNS filtering and query logging, dnsdist handles D
 - **Custom DNS filtering**: Centralized control over which domains are resolved
 - **Secure DNS**: DoH at `https://<DOMAIN_DNS>/dns-query` and DoT on port `853`
 - **Automatic TLS**: Caddy obtains and renews certificates via Let's Encrypt
-- **Dashboard**: Full query visibility and management at `https://<DOMAIN_DNS>/admin/login`
+- **Dashboard**: Full query visibility and management at `https://<DOMAIN_DASHBOARD>/admin/`
 - **Persistence & health checks**: Data volumes and restart policies included
 
 ## 🔧 Prerequisites
 
-- **A/AAAA DNS records** pointing both domains to your server’s public IP:
-  - `DOMAIN_DNS` → e.g., `dns.example.com`
-  - `DOMAIN_DASHBOARD` → e.g., `dashboard.example.com`
-- **Open ports** on your server:
-  - `80, 443` → Caddy (HTTP/HTTPS)
-  - `53/tcp+udp` → DNS
-  - `853/tcp` → DoT
-- **Docker & Docker Compose** installed
+### DNS Records
 
-## 🚀 Quick start
+Set up **A/AAAA DNS records** pointing both domains to your server's public IP:
 
-1. Clone and enter the project:
+- `DOMAIN_DNS` → e.g., `dns.example.com`
+- `DOMAIN_DASHBOARD` → e.g., `dashboard.example.com`
 
-```bash
-git clone --depth=1 --branch active https://github.com/allenhack638/dns-server.git
-cd dns-server
-```
+### Port Requirements
 
-2. Copy the environment file and edit values:
+Ensure the following ports are available (no other services using them):
 
-```bash
-cp env.example .env
-```
+- `80, 443` → Caddy (HTTP/HTTPS)
+- `53/tcp, 53/udp` → DNS (dnsdist → Pi-hole)
+- `853/tcp` → DoT (dnsdist)
 
-3. Start the stack:
+### ⚠️ Handling Port 53 Conflicts
+
+Many Linux distributions run `systemd-resolved` on port **53** by default, which can prevent Pi-hole/dnsdist from starting properly.
+
+#### Recommended Approach
+
+**Step 1: Try starting normally first**
 
 ```bash
 docker compose up -d
 ```
 
-## 📜 Logs & Troubleshooting
-
-You can check logs to verify everything is running correctly or to debug issues.
-
-### View all service logs (live)
-
-```bash
-docker compose logs
-```
-
-### View individual service logs
+**Step 2: Check if there are port conflicts**
 
 ```bash
 docker compose logs dns-pihole
-```
-
-```bash
-docker compose logs dns-caddy
-```
-
-```bash
 docker compose logs dns-dnsdist
 ```
 
-## ⚙️ Environment variables
+**Step 3: If you see "port 53 already in use" errors, then disable systemd-resolved:**
 
-| Variable                         | Description                               |
-| -------------------------------- | ----------------------------------------- |
-| `TZ`                             | Timezone (e.g., `Asia/Kolkata`)           |
-| `FTLCONF_webserver_api_password` | Dashboard login password                  |
-| `DOMAIN_DNS`                     | Public domain for DoH/DoT (TLS via Caddy) |
-| `DOMAIN_DASHBOARD`               | Public domain for the dashboard           |
+```bash
+# Stop the containers first
+docker compose down
 
-👉 Timezone in tz database format (e.g., `America/New_York`, `Asia/Kolkata`) – see the full list in the [tz database time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
+# Disable systemd-resolved
+sudo systemctl stop systemd-resolved
+sudo systemctl disable systemd-resolved
 
-## 💾 Data & persistence
+# Start the stack again
+docker compose up -d
+```
 
-- Pi-hole configuration and DNSMasq data persist in the `data/` directory
-- Certificates are stored under `data/caddy-data/`
-- Certificates are also copied to `data/shared-certs/` for dnsdist
+**To re-enable systemd-resolved later (if needed):**
+
+```bash
+docker compose down
+sudo systemctl enable systemd-resolved
+sudo systemctl start systemd-resolved
+```
+
+> **Why this order matters**: If you disable `systemd-resolved` first, your system will lose DNS resolution temporarily, preventing Docker from pulling images and Caddy from verifying certificates. Starting the stack first allows everything to download properly, then we only disable `systemd-resolved` if there's actually a conflict.
+
+### Opening Firewall Ports
+
+- **Linux (ufw, firewalld, or iptables)**: [DigitalOcean guide on opening ports](https://www.digitalocean.com/community/tutorials/opening-a-port-on-linux)
+- **Windows (Windows Defender Firewall)**: [Liquid Web step-by-step guide](https://www.liquidweb.com/blog/open-a-port-in-windows-firewall-easily-safely/)
+
+> **Tip**: Always follow your local IT/security policies when opening firewall ports.
+
+## 🚀 Quick Start
+
+1. **Clone the repository:**
+
+   ```bash
+   git clone --depth=1 --branch active https://github.com/allenhack638/dns-server.git
+   cd dns-server
+   ```
+
+2. **Configure environment:**
+
+   ```bash
+   cp env.example .env
+   # Edit .env with your domain names and password
+   ```
+
+3. **Start the stack:**
+   ```bash
+   docker compose up -d
+   ```
+
+## ⚙️ Configuration
+
+### Environment Variables
+
+| Variable                         | Description                                       | Example                 |
+| -------------------------------- | ------------------------------------------------- | ----------------------- |
+| `TZ`                             | Timezone in tz database format                    | `Asia/Kolkata`          |
+| `FTLCONF_webserver_api_password` | Dashboard login password (use a strong password!) | `your-secure-password`  |
+| `DOMAIN_DNS`                     | Public domain for DoH/DoT (TLS via Caddy)         | `dns.example.com`       |
+| `DOMAIN_DASHBOARD`               | Public domain for the dashboard                   | `dashboard.example.com` |
+
+> **Timezone reference**: See the full list in [tz database time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
 
 ## 📡 Usage
 
+### Service Endpoints
+
 | Protocol  | Address / URL                       | Port |
 | --------- | ----------------------------------- | ---- |
-| DoH       | `https://<DOMAIN_DNS>/dns-query`    | 443  |
-| DoT       | `<DOMAIN_DNS>`                      | 853  |
 | DNS       | `<SERVER_IP>`                       | 53   |
+| DoT       | `<DOMAIN_DNS>`                      | 853  |
+| DoH       | `https://<DOMAIN_DNS>/dns-query`    | 443  |
 | Dashboard | `https://<DOMAIN_DASHBOARD>/admin/` | 443  |
 
-## 📍 Ports
+### Port Summary
 
 | Port(s)        | Service                 |
 | -------------- | ----------------------- |
-| 80 / 443       | Caddy (HTTP/HTTPS)      |
 | 53/tcp, 53/udp | DNS (dnsdist → Pi-hole) |
+| 80, 443        | Caddy (HTTP/HTTPS)      |
 | 853/tcp        | DoT (dnsdist)           |
 
-### Learn how to open ports:
+## 💾 Data & Persistence
 
-- **On Linux (ufw, firewalld, or iptables)** — see the [DigitalOcean guide on opening ports](https://www.digitalocean.com/community/tutorials/opening-a-port-on-linux) :contentReference[oaicite:2]{index=2}
-- **On Windows (Windows Defender Firewall)** — follow this [step-by-step article from Liquid Web](https://www.liquidweb.com/blog/open-a-port-in-windows-firewall-easily-safely/) :contentReference[oaicite:3]{index=3}
+- **Pi-hole configuration**: Stored in `data/pihole/`
+- **Caddy certificates**: Stored in `data/caddy-data/`
+- **Shared certificates**: Copied to `data/shared-certs/` for dnsdist access
 
-> Tip: Always follow your local IT/security policies when opening firewall ports.
+All data persists between container restarts and updates.
 
-## 📝 Notes
+## 📜 Monitoring & Troubleshooting
 
-- Ensure your domain DNS records are configured **before starting**, so Caddy can obtain certificates.
-- Set a strong password for **`FTLCONF_webserver_api_password`**.
+### View Logs
+
+**All services (live):**
+
+```bash
+docker compose logs -f
+```
+
+**Individual services:**
+
+```bash
+docker compose logs dns-pihole
+docker compose logs dns-caddy
+docker compose logs dns-dnsdist
+```
+
+### Health Checks
+
+The stack includes built-in health checks and restart policies to ensure services stay running.
 
 ## 🙌 Credits
 
-This project would not be possible without the following open-source software:
+This project is built with these excellent open-source tools:
 
 - [Pi-hole](https://pi-hole.net/) – Network-level DNS filtering and management
-- [dnsdist](https://dnsdist.org/) – Highly DNS-, DoS- and abuse-aware load-balancer
-- [Caddy](https://caddyserver.com/) – Powerful, enterprise-ready web server with automatic HTTPS
+- [dnsdist](https://dnsdist.org/) – High-performance DNS load balancer with DoH/DoT support
+- [Caddy](https://caddyserver.com/) – Modern web server with automatic HTTPS
 
-## 🤝 Contributing & Issues
+## 🤝 Contributing
 
-If you encounter any issues, have questions, or would like to suggest new features, please feel free to open an issue or start a discussion in this repository. Contributions and feedback are always welcome!
+Issues, questions, and feature requests are welcome! Please open an issue or start a discussion in this repository.
 
 ## 📖 Advanced Configuration
 
-Need more than the default setup? I can help you with:
+Need custom configurations? I can help with:
 
 - Custom ACLs and fine-grained access control
 - Advanced dnsdist load-balancing strategies
@@ -137,4 +185,4 @@ Need more than the default setup? I can help you with:
 - Integration with upstream/external resolvers
 - Enterprise-grade scaling and security hardening
 
-📬 Contact: [allenbenny038@gmail.com](mailto:allenbenny038@gmail.com)
+📬 **Contact**: [allenbenny038@gmail.com](mailto:allenbenny038@gmail.com)
