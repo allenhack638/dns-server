@@ -1,4 +1,4 @@
-# Self-hosted Private DNS (Pi-hole + dnsdist + Caddy)
+# Self-hosted Private DNS (Pi-hole + Dnsdist + Caddy)
 
 ![Pi-hole Dashboard Screenshot](docs/images/pihole-dashboard.png)
 
