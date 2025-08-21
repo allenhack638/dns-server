@@ -66,13 +66,6 @@ sudo systemctl start systemd-resolved
 
 > **Why this order matters**: If you disable `systemd-resolved` first, your system will lose DNS resolution temporarily, preventing Docker from pulling images and Caddy from verifying certificates. Starting the stack first allows everything to download properly, then we only disable `systemd-resolved` if there's actually a conflict.
 
-### Opening Firewall Ports
-
-- **Linux (ufw, firewalld, or iptables)**: [DigitalOcean guide on opening ports](https://www.digitalocean.com/community/tutorials/opening-a-port-on-linux)
-- **Windows (Windows Defender Firewall)**: [Liquid Web step-by-step guide](https://www.liquidweb.com/blog/open-a-port-in-windows-firewall-easily-safely/)
-
-> **Tip**: Always follow your local IT/security policies when opening firewall ports.
-
 ## 🚀 Quick Start
 
 1. **Clone the repository:**
@@ -85,7 +78,7 @@ sudo systemctl start systemd-resolved
 2. **Configure environment:**
 
    ```bash
-   cp env.example .env
+   cp .env.example .env
    # Edit .env with your domain names and password
    ```
 
