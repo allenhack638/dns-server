@@ -1,5 +1,7 @@
 # Self-hosted Private DNS (Pi-hole + dnsdist + Caddy)
 
+![Pi-hole Dashboard Screenshot](docs/images/pihole-dashboard.png)
+
 Run your own **private DNS resolver** with advanced filtering, DNS over HTTPS (DoH), and DNS over TLS (DoT) — all in a simple Docker setup.  
 Pi-hole provides customizable DNS filtering and query logging, dnsdist handles DNS/DoT/DoH backends, and Caddy manages HTTPS with automatic Let's Encrypt certificates.
 
@@ -10,9 +12,6 @@ Pi-hole provides customizable DNS filtering and query logging, dnsdist handles D
 - **Automatic TLS**: Caddy obtains and renews certificates via Let's Encrypt
 - **Dashboard**: Full query visibility and management at `https://<DOMAIN_DNS>/admin/login`
 - **Persistence & health checks**: Data volumes and restart policies included
-
-![Pi-hole Dashboard Screenshot](docs/images/pihole-dashboard.png)
-![Pi-hole Login Page](docs/images/pihole-login.png)
 
 ## 🔧 Prerequisites
 
