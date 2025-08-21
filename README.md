@@ -11,6 +11,9 @@ Pi-hole provides customizable DNS filtering and query logging, dnsdist handles D
 - **Dashboard**: Full query visibility and management at `https://<DOMAIN_DNS>/admin/login`
 - **Persistence & health checks**: Data volumes and restart policies included
 
+![Pi-hole Dashboard Screenshot](docs/images/pihole-dashboard.png)
+![Pi-hole Login Page](docs/images/pihole-login.png)
+
 ## 🔧 Prerequisites
 
 - **A/AAAA DNS records** pointing both domains to your server’s public IP:
@@ -27,7 +30,7 @@ Pi-hole provides customizable DNS filtering and query logging, dnsdist handles D
 1. Clone and enter the project:
 
 ```bash
-git clone https://github.com/allenhack638/dns-server.git
+git clone --depth=1 --branch active https://github.com/allenhack638/dns-server.git
 cd dns-server
 ```
 
@@ -50,33 +53,33 @@ You can check logs to verify everything is running correctly or to debug issues.
 ### View all service logs (live)
 
 ```bash
-docker compose logs -f
+docker compose logs
 ```
 
 ### View individual service logs
 
 ```bash
-docker compose logs pihole
+docker compose logs dns-pihole
 ```
 
 ```bash
-docker compose logs caddy
+docker compose logs dns-caddy
 ```
 
 ```bash
-docker compose logs dnsdist
+docker compose logs dns-dnsdist
 ```
 
 ## ⚙️ Environment variables
 
 | Variable                         | Description                               |
 | -------------------------------- | ----------------------------------------- |
-| `TZ`                             | Timezone (e.g., `UTC`)                    |
+| `TZ`                             | Timezone (e.g., `Asia/Kolkata`)           |
 | `FTLCONF_webserver_api_password` | Dashboard login password                  |
 | `DOMAIN_DNS`                     | Public domain for DoH/DoT (TLS via Caddy) |
 | `DOMAIN_DASHBOARD`               | Public domain for the dashboard           |
 
-👉 For a full list of supported environment variables and configuration options, check the [Pi-hole Docker repository](https://github.com/pi-hole/docker-pi-hole).
+👉 Timezone in tz database format (e.g., `America/New_York`, `Asia/Kolkata`) – see the full list in the [tz database time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
 
 ## 💾 Data & persistence
 
