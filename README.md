@@ -54,22 +54,12 @@ Ensure the following ports are available (no other services using them):
    ```
 
 3. **Start the stack:**
+
    ```bash
    docker compose up -d
    ```
 
-### ⚠️ Handling Port 53 Conflicts
-
-Many Linux distributions run `systemd-resolved` on port **53** by default, which can prevent Pi-hole/dnsdist from starting properly.
-
-4. **Check logs for port conflicts:**
-
-   ```bash
-   docker compose logs dns-pihole
-   docker compose logs dns-dnsdist
-   ```
-
-5. **If you see "port 53 already in use" errors, then disable systemd-resolved:**
+4. ⚠️ **If you see "port 53 already in use" errors, then disable systemd-resolved:**
 
    ```bash
    # Stop the containers first
