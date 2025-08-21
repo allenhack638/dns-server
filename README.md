@@ -42,7 +42,7 @@ Ensure the following ports are available (no other services using them):
 1. **Clone the repository:**
 
    ```bash
-   git clone --depth=1 --branch active https://github.com/allenhack638/dns-server.git
+   git clone --depth=1 https://github.com/allenhack638/dns-server.git
    cd dns-server
    ```
 
