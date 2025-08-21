@@ -30,13 +30,6 @@ Ensure the following ports are available (no other services using them):
 - `53/tcp, 53/udp` → DNS (dnsdist → Pi-hole)
 - `853/tcp` → DoT (dnsdist)
 
-### Opening Firewall Ports
-
-- **Linux (ufw, firewalld, or iptables)**: [DigitalOcean guide on opening ports](https://www.digitalocean.com/community/tutorials/opening-a-port-on-linux)
-- **Windows (Windows Defender Firewall)**: [Liquid Web step-by-step guide](https://www.liquidweb.com/blog/open-a-port-in-windows-firewall-easily-safely/)
-
-> **Tip**: Always follow your local IT/security policies when opening firewall ports.
-
 ## 🚀 Quick Start
 
 1. **Clone the repository:**
