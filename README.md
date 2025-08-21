@@ -30,41 +30,12 @@ Ensure the following ports are available (no other services using them):
 - `53/tcp, 53/udp` → DNS (dnsdist → Pi-hole)
 - `853/tcp` → DoT (dnsdist)
 
-### ⚠️ Handling Port 53 Conflicts
+### Opening Firewall Ports
 
-Many Linux distributions run `systemd-resolved` on port **53** by default, which can prevent Pi-hole/dnsdist from starting properly.
+- **Linux (ufw, firewalld, or iptables)**: [DigitalOcean guide on opening ports](https://www.digitalocean.com/community/tutorials/opening-a-port-on-linux)
+- **Windows (Windows Defender Firewall)**: [Liquid Web step-by-step guide](https://www.liquidweb.com/blog/open-a-port-in-windows-firewall-easily-safely/)
 
-#### Recommended Approach
-
-**Step 1: Try starting normally first**
-
-```bash
-docker compose up -d
-```
-
-**Step 2: If you see "port 53 already in use" errors, then disable systemd-resolved:**
-
-```bash
-# Stop the containers first
-docker compose down
-
-# Disable systemd-resolved
-sudo systemctl stop systemd-resolved
-sudo systemctl disable systemd-resolved
-
-# Start the stack again
-docker compose up -d
-```
-
-**To re-enable systemd-resolved later (if needed):**
-
-```bash
-docker compose down
-sudo systemctl enable systemd-resolved
-sudo systemctl start systemd-resolved
-```
-
-> **Why this order matters**: If you disable `systemd-resolved` first, your system will lose DNS resolution temporarily, preventing Docker from pulling images and Caddy from verifying certificates. Starting the stack first allows everything to download properly, then we only disable `systemd-resolved` if there's actually a conflict.
+> **Tip**: Always follow your local IT/security policies when opening firewall ports.
 
 ## 🚀 Quick Start
 
@@ -86,6 +57,41 @@ sudo systemctl start systemd-resolved
    ```bash
    docker compose up -d
    ```
+
+### ⚠️ Handling Port 53 Conflicts
+
+Many Linux distributions run `systemd-resolved` on port **53** by default, which can prevent Pi-hole/dnsdist from starting properly.
+
+4. **Check logs for port conflicts:**
+
+   ```bash
+   docker compose logs dns-pihole
+   docker compose logs dns-dnsdist
+   ```
+
+5. **If you see "port 53 already in use" errors, then disable systemd-resolved:**
+
+   ```bash
+   # Stop the containers first
+   docker compose down
+
+   # Disable systemd-resolved
+   sudo systemctl stop systemd-resolved
+   sudo systemctl disable systemd-resolved
+
+   # Start the stack again
+   docker compose up -d
+   ```
+
+**To re-enable systemd-resolved later (if needed):**
+
+```bash
+docker compose down
+sudo systemctl enable systemd-resolved
+sudo systemctl start systemd-resolved
+```
+
+> **Why this order matters**: If you disable `systemd-resolved` first, your system will lose DNS resolution temporarily, preventing Docker from pulling images and Caddy from verifying certificates. Starting the stack first allows everything to download properly, then we only disable `systemd-resolved` if there's actually a conflict.
 
 ## ⚙️ Configuration
 
