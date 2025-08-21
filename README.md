@@ -42,14 +42,7 @@ Many Linux distributions run `systemd-resolved` on port **53** by default, which
 docker compose up -d
 ```
 
-**Step 2: Check if there are port conflicts**
-
-```bash
-docker compose logs dns-pihole
-docker compose logs dns-dnsdist
-```
-
-**Step 3: If you see "port 53 already in use" errors, then disable systemd-resolved:**
+**Step 2: If you see "port 53 already in use" errors, then disable systemd-resolved:**
 
 ```bash
 # Stop the containers first
