@@ -13,6 +13,13 @@ services:
       - ./data/dnsmasq.d:/etc/dnsmasq.d
       - /etc/localtime:/etc/localtime:ro
     restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "5"
+        compress: "true"
+
     healthcheck:
       test: ["CMD", "dig", "@127.0.0.1", "google.com"]
       interval: 30s
@@ -31,6 +38,9 @@ services:
     environment:
       - DOMAIN_DNS=${DOMAIN_DNS}
       - DOMAIN_DASHBOARD=${DOMAIN_DASHBOARD}
+      - DOT_PORT=${DOT_PORT}
+      - ENABLE_DASHBOARD=${ENABLE_DASHBOARD}
+      - ENABLE_DOH=${ENABLE_DOH}
     volumes:
       - ./configs/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
       - ./data/caddy-data:/data
@@ -39,6 +49,13 @@ services:
       - "80:80"
       - "443:443"
     restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "5"
+        compress: "true"
+
     healthcheck:
       test: ["CMD", "caddy", "validate", "--config", "/etc/caddy/Caddyfile"]
       interval: 30s
@@ -77,6 +94,13 @@ services:
         sleep 604800;
       done'
     restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "5"
+        compress: "true"
+
     depends_on:
       caddy:
         condition: service_healthy
@@ -98,17 +122,10 @@ services:
     entrypoint: ["/bin/sh", "-c"]
     command: ["dnsdist --config /etc/dnsdist/dnsdist.conf --supervised"]
     ports:
-      - "53:53/tcp"
-      - "53:53/udp"
-      - "853:853/tcp"
+      - "${DNS_PORT_TCP:-}"
+      - "${DNS_PORT_UDP:-}"
+      - "${DOT_PORT:-}"
     restart: unless-stopped
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "100m"
-        max-file: "5"
-        compress: "true"
-
     cap_add:
       - NET_BIND_SERVICE
     healthcheck:

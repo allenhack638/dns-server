@@ -76,6 +76,8 @@ docker compose logs dnsdist
 | `DOMAIN_DNS`                     | Public domain for DoH/DoT (TLS via Caddy) |
 | `DOMAIN_DASHBOARD`               | Public domain for the dashboard           |
 
+👉 For a full list of supported environment variables and configuration options, check the [Pi-hole Docker repository](https://github.com/pi-hole/docker-pi-hole).
+
 ## 💾 Data & persistence
 
 - Pi-hole configuration and DNSMasq data persist in the `data/` directory
