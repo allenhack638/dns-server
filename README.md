@@ -42,8 +42,8 @@ Ensure the following ports are available (no other services using them):
 1. **Clone the repository:**
 
    ```bash
-   git clone --depth=1 https://github.com/allenhack638/dns-server.git
-   cd dns-server
+   git clone --depth=1 https://github.com/allenhack638/self-hostable-private-dns.git
+   cd self-hostable-private-dns
    ```
 
 2. **Configure environment:**
