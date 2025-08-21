@@ -129,6 +129,12 @@ If you encounter any issues, have questions, or would like to suggest new featur
 
 ## 📖 Advanced Configuration
 
-If you need more granular control over your DNS server (custom ACLs, advanced dnsdist load-balancing strategies, conditional forwarding rules, integration with upstream resolvers, or enterprise-grade security hardening), feel free to [contact me](mailto:allenbenny038@gmail.com).
+Need more than the default setup? I can help you with:
 
-I can help with advanced setups, scaling, and adding **granular features** beyond what’s covered in the base configuration.
+- Custom ACLs and fine-grained access control
+- Advanced dnsdist load-balancing strategies
+- Conditional forwarding rules
+- Integration with upstream/external resolvers
+- Enterprise-grade scaling and security hardening
+
+📬 Contact: [allenbenny038@gmail.com](mailto:allenbenny038@gmail.com)
